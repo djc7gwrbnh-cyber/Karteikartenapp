@@ -32,6 +32,7 @@
 
 <style>
   .thumb {
+    display: block;
     flex: none;
     border-radius: 8px;
     overflow: hidden;

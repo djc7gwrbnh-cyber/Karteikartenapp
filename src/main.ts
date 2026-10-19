@@ -12,3 +12,8 @@ settings.start();
 trackViewport();
 mount(App, { target: document.getElementById('app')! });
 setupPwa();
+
+// Beim Start verwaiste Bilder entfernen (z. B. von abgebrochenen Eingaben)
+setTimeout(() => {
+  import('./lib/db/images').then((m) => m.collectUnusedImages()).catch(() => {});
+}, 4000);

@@ -56,3 +56,15 @@ describe('Datenbank', () => {
     await deleteCards([]);
   });
 });
+
+describe('Bilder aufräumen', () => {
+  it('löscht nur unbenutzte Bilder', async () => {
+    const { collectUnusedImages } = await import('./images');
+    const deck = await createDeck({ folderId: 'f', name: 'A' });
+    const used = await saveImage(new Blob(['a']), 1, 1);
+    await saveImage(new Blob(['b']), 1, 1);
+    await addCard(deck, { text: '', imageId: used }, { text: 'x' });
+    expect(await collectUnusedImages()).toBe(1);
+    expect(await db.images.count()).toBe(1);
+  });
+});
