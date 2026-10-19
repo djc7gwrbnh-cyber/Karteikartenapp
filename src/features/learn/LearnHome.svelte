@@ -6,6 +6,7 @@
   import FolderCollection from './FolderCollection.svelte';
   import FolderEditor from './FolderEditor.svelte';
   import DueCard from './DueCard.svelte';
+  import MotivationCard from './MotivationCard.svelte';
   import { library } from '../../app/library.svelte';
   import { settings } from '../../app/settings.svelte';
 
@@ -27,6 +28,7 @@
   {/snippet}
 
   {#if library.loaded}
+    <MotivationCard />
     <DueCard />
     {#if folders.length === 0}
       <EmptyState

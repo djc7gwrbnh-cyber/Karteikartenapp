@@ -12,6 +12,7 @@
   import QuickAdd from '../features/learn/QuickAdd.svelte';
   import CardEditor from '../features/learn/CardEditor.svelte';
   import StudyScreen from '../features/study/StudyScreen.svelte';
+  import MessagesPage from '../features/settings/MessagesPage.svelte';
 
   const route = $derived(router.route);
   const tab = $derived(tabOf(route));
@@ -36,6 +37,8 @@
           <StudyScreen />
         {:else if seg[0] === 'history'}
           <HistoryHome />
+        {:else if seg[0] === 'settings' && seg[1] === 'messages'}
+          <MessagesPage />
         {:else if seg[0] === 'settings'}
           <SettingsHome />
         {:else if seg[0] === 'deck' && seg[1] && seg[2] === 'add'}

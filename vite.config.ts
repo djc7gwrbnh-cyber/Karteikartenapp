@@ -2,12 +2,16 @@
 import { defineConfig } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { VitePWA } from 'vite-plugin-pwa';
+import pkg from './package.json' with { type: 'json' };
 
 // Repository name = GitHub Pages sub path
 const base = '/Karteikartenapp/';
 
 export default defineConfig({
   base,
+  define: {
+    __APP_VERSION__: JSON.stringify(pkg.version)
+  },
   plugins: [
     svelte(),
     VitePWA({
