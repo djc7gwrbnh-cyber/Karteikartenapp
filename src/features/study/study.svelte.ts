@@ -55,17 +55,26 @@ function load(): ActiveSession | null {
 }
 
 class StudyStore {
-  active = $state<ActiveSession | null>(load());
+  active = $state.raw<ActiveSession | null>(load());
   finished = $state<FinishedSession | null>(null);
   busy = false;
 
   private save() {
     try {
-      if (this.active) localStorage.setItem(STORAGE_KEY, JSON.stringify($state.snapshot(this.active)));
-      else localStorage.removeItem(STORAGE_KEY);
+      if (this.active) {
+        // Nur die letzten Rückgängig-Schritte sichern – hält das Speichern auch bei großen Stapeln schnell.
+        const { history, ...rest } = this.active;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...rest, history: history.slice(-3) }));
+      } else localStorage.removeItem(STORAGE_KEY);
     } catch {
       /* Speicher voll oder privat: Sitzung läuft trotzdem weiter */
     }
+  }
+
+  /** Übernimmt einen geänderten Sitzungszustand (unveränderlich ersetzt, damit die Oberfläche reagiert). */
+  private commit(s: ActiveSession) {
+    this.active = { ...s };
+    this.save();
   }
 
   start(opts: { mode: SessionMode; title: string; returnTo: string; items: StudyItem[] }) {
@@ -93,17 +102,17 @@ class StudyStore {
 
   /** Entfernt Einträge, deren Karte inzwischen gelöscht wurde. */
   prune(existing: Set<string>) {
-    const s = this.active;
+    const s = this.active ? { ...this.active } : null;
     if (!s) return;
     const gone = new Set(s.items.filter((i) => !existing.has(i.cardId)).map((i) => i.key));
     if (!gone.size) return;
     s.items = s.items.filter((i) => !gone.has(i.key));
     s.queue = { ...s.queue, pending: s.queue.pending.filter((k) => !gone.has(k)), done: s.queue.done.filter((k) => !gone.has(k)) };
-    this.save();
+    this.commit(s);
   }
 
   async answer(knew: boolean) {
-    const s = this.active;
+    const s = this.active ? { ...this.active } : null;
     if (!s || this.busy) return;
     const key = s.queue.pending[0];
     const item = s.items.find((i) => i.key === key);
@@ -135,7 +144,7 @@ class StudyStore {
       s.activeMs += Math.min(now - s.lastAt, MAX_GAP_MS);
       s.lastAt = now;
       s.queue = next;
-      this.save();
+      this.commit(s);
       if (isFinished(next)) await this.finish();
     } finally {
       this.busy = false;
@@ -147,7 +156,7 @@ class StudyStore {
   }
 
   async undo() {
-    const s = this.active;
+    const s = this.active ? { ...this.active } : null;
     const entry = s?.history.at(-1);
     if (!s || !entry || this.busy) return;
     this.busy = true;
@@ -162,15 +171,14 @@ class StudyStore {
       s.activeMs = entry.activeMs;
       s.history = s.history.slice(0, -1);
       s.lastAt = Date.now();
-      this.save();
+      this.commit(s);
     } finally {
       this.busy = false;
     }
   }
 
   private record(live: ActiveSession, completed: boolean): Session {
-    // Reine Daten (keine Svelte-Proxys), damit IndexedDB sie speichern kann
-    const s = $state.snapshot(live) as ActiveSession;
+    const s = live;
     const perDeck = new Map<string, { deckId: string; total: number; firstTry: number }>();
     for (const item of s.items) {
       if (!(item.key in s.queue.first)) continue;

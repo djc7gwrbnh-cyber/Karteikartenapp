@@ -82,12 +82,14 @@ export function actionSheet(items: ActionItem[], title?: string): Promise<string
   });
 }
 
-export function toast(text: string, action?: Toast['action']) {
+export function toast(text: string, action?: Toast['action'], opts: { persistent?: boolean } = {}) {
   const id = ++counter;
   overlays.toasts = [...overlays.toasts.slice(-1), { id, text, action }];
-  setTimeout(() => {
-    overlays.toasts = overlays.toasts.filter((t) => t.id !== id);
-  }, action ? 4500 : 2600);
+  if (!opts.persistent) {
+    setTimeout(() => {
+      overlays.toasts = overlays.toasts.filter((t) => t.id !== id);
+    }, action ? 4500 : 2600);
+  }
 }
 
 export function dismissToast(id: number) {

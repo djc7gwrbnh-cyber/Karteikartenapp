@@ -20,6 +20,8 @@
   const compare = $derived(comparison(rate, prevRate));
 
   onMount(() => haptic('success'));
+  // Kleine iPhones (z. B. SE): etwas kompakter, damit alles auf einen Blick passt
+  const compact = typeof window !== 'undefined' && window.innerHeight < 720;
 </script>
 
 <div class="summary">
@@ -33,8 +35,8 @@
 
       <div class="chart" in:fly={{ y: 12, duration: dur(400), delay: dur(80) }}>
         <Donut
-          size={164}
-          thickness={18}
+          size={compact ? 132 : 164}
+          thickness={compact ? 16 : 18}
           segments={[
             { value: r.firstTry, color: 'var(--good)', label: 'Auf Anhieb gewusst' },
             { value: repeated, color: 'var(--warm)', label: 'Musste wiederholt werden' }
@@ -74,7 +76,7 @@
 
   <div class="actions">
     {#if result.missedItems.length}
-      <button class="btn btn-large btn-block" onclick={() => study.repeatMissed()}>
+      <button class="btn btn-large btn-block repeat" onclick={() => study.repeatMissed()}>
         <Icon name="repeat" size={20} /> Schwere Karten nochmal ({result.missedItems.length})
       </button>
     {/if}
@@ -206,6 +208,11 @@
     font-size: var(--fs-small);
     color: var(--text-2);
     max-width: 34ch;
+  }
+
+  .repeat {
+    white-space: nowrap;
+    font-size: var(--fs-small);
   }
 
   .actions {

@@ -108,7 +108,7 @@
         onclick={() => {
           open = false;
           router.go(`/deck/${deck.id}`);
-        }}>Karten ansehen und bearbeiten</button
+        }}>Karten bearbeiten</button
       >
     {/if}
   </div>

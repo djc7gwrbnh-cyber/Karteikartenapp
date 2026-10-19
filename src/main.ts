@@ -6,12 +6,13 @@ import { setupPwa } from './app/pwa';
 import { library } from './app/library.svelte';
 import { settings } from './app/settings.svelte';
 import { trackViewport } from './app/viewport';
+import { toast } from './ui/overlay.svelte';
 
 library.start();
 settings.start();
 trackViewport();
 mount(App, { target: document.getElementById('app')! });
-setupPwa();
+setupPwa((apply) => toast('Eine neue Version ist da.', { label: 'Neu laden', run: apply }, { persistent: true }));
 
 // Beim Start verwaiste Bilder entfernen (z. B. von abgebrochenen Eingaben)
 setTimeout(() => {
