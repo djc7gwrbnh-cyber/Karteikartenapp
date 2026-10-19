@@ -10,6 +10,10 @@
   import DeckPicker from './DeckPicker.svelte';
   import StartSheet from '../study/StartSheet.svelte';
   import { startDeck } from '../study/start';
+  import TextImportSheet from './TextImportSheet.svelte';
+  import { exportDeck } from '../../lib/io/backup';
+  import { toTextList } from '../../lib/io/textlist';
+  import { safeFilename, shareFile } from '../../lib/io/files';
   import { library } from '../../app/library.svelte';
   import { router } from '../../app/router.svelte';
   import { live } from '../../lib/live.svelte';
@@ -47,6 +51,7 @@
   let moving = $state<string | null>(null);
   let picking = $state(false);
   let starting = $state(false);
+  let importing = $state(false);
 
   const filtered = $derived(
     cards.value.filter((c) => (filter === 'all' || cardStatus(c) === filter) && matchesCard(c, query))
@@ -99,6 +104,13 @@
       [
         { id: 'edit', label: 'Stapel bearbeiten', icon: 'edit' },
         ...(cards.value.length > 1 ? [{ id: 'sort', label: 'Karten sortieren', icon: 'sort' as const }] : []),
+        { id: 'import-text', label: 'Karten aus Text importieren', icon: 'text' },
+        ...(cards.value.length
+          ? [
+              { id: 'export-text', label: 'Als Textliste exportieren', icon: 'share' as const },
+              { id: 'export-deck', label: 'Stapel teilen (mit Bildern)', icon: 'share' as const }
+            ]
+          : []),
         { id: 'delete', label: 'Stapel löschen', icon: 'trash', destructive: true }
       ],
       deck?.name
@@ -108,6 +120,19 @@
       query = '';
       filter = 'all';
       sorting = true;
+    }
+    if (choice === 'import-text') importing = true;
+    if (choice === 'export-text' && deck) {
+      const text = toTextList(cards.value.map((c) => ({ front: c.front.text, back: c.back.text })));
+      await shareFile(text, `${safeFilename(deck.name)}.txt`, 'text/plain');
+    }
+    if (choice === 'export-deck' && deck) {
+      try {
+        await shareFile(await exportDeck(deck.id), `${safeFilename(deck.name)}.karteikarten.json`, 'application/json');
+      } catch (e) {
+        console.error(e);
+        toast('Der Export hat nicht geklappt.');
+      }
     }
     if (choice === 'delete') remove();
   }
@@ -167,6 +192,7 @@
         <button class="btn btn-primary btn-large" onclick={() => router.go(`/deck/${id}/add`)}>
           <Icon name="plus" size={22} /> Karten hinzufügen
         </button>
+        <button class="btn btn-quiet" onclick={() => (importing = true)}>Aus Textliste importieren</button>
       </EmptyState>
     {:else if sorting}
       <p class="hint">Ziehe die Karten am Griff in die gewünschte Reihenfolge.</p>
@@ -209,6 +235,7 @@
   </Page>
 
   <StartSheet bind:open={starting} {deck} showCardsLink={false} />
+  <TextImportSheet bind:open={importing} deckId={deck.id} />
   <DeckEditor bind:open={editing} {deck} folderId={deck.folderId} />
   <DeckPicker bind:open={picking} exclude={id} title="Verschieben nach" onpick={move} />
 {:else if library.loaded}

@@ -10,6 +10,9 @@
   import DeckEditor from './DeckEditor.svelte';
   import type { Deck } from '../../lib/db/types';
   import StartSheet from '../study/StartSheet.svelte';
+  import { importDeck, parseDeck } from '../../lib/io/backup';
+  import { pickTextFile } from '../../lib/io/files';
+  import { ImportError } from '../../lib/io/validate';
   import { library } from '../../app/library.svelte';
   import { router } from '../../app/router.svelte';
   import { settings } from '../../app/settings.svelte';
@@ -35,10 +38,26 @@
   async function add() {
     const choice = await actionSheet([
       { id: 'deck', label: 'Neuer Stapel', icon: 'cards' },
-      { id: 'sub', label: 'Neues Thema (Unterordner)', icon: 'folderPlus' }
+      { id: 'sub', label: 'Neues Thema (Unterordner)', icon: 'folderPlus' },
+      { id: 'import', label: 'Geteilten Stapel importieren', icon: 'import' }
     ]);
     if (choice === 'deck') creatingDeck = true;
     if (choice === 'sub') creatingSub = true;
+    if (choice === 'import') importShared();
+  }
+
+  async function importShared() {
+    const text = await pickTextFile('.json,application/json');
+    if (!text || !folder) return;
+    try {
+      const data = parseDeck(text);
+      const deckId = await importDeck(data, folder.id);
+      toast(`„${data.deck.name}“ importiert`);
+      router.go(`/deck/${deckId}`);
+    } catch (e) {
+      console.error(e);
+      toast(e instanceof ImportError ? e.message : 'Der Stapel konnte nicht importiert werden.');
+    }
   }
 
   let startDeck = $state<Deck | null>(null);

@@ -3,11 +3,14 @@ import { db } from './db';
 export interface Settings {
   folderView: 'grid' | 'list';
   haptics: boolean;
+  /** Tag des letzten Backups (YYYY-MM-DD) */
+  lastBackup: string | null;
 }
 
 export const defaultSettings: Settings = {
   folderView: 'grid',
-  haptics: true
+  haptics: true,
+  lastBackup: null
 };
 
 export async function loadSettings(): Promise<Settings> {

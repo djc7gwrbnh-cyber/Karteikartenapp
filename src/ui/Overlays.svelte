@@ -165,7 +165,7 @@
     left: 0;
     right: 0;
     bottom: calc(var(--safe-bottom) + var(--tabbar-h) + 20px);
-    z-index: 300;
+    z-index: 150;
     display: flex;
     flex-direction: column;
     align-items: center;

@@ -2,6 +2,7 @@
   import Page from '../../ui/Page.svelte';
   import Icon from '../../ui/Icon.svelte';
   import Switch from '../../ui/Switch.svelte';
+  import BackupSection from './BackupSection.svelte';
   import { router } from '../../app/router.svelte';
   import { settings } from '../../app/settings.svelte';
   import { live } from '../../lib/live.svelte';
@@ -48,6 +49,11 @@
       </div>
     </section>
 
+    <section>
+      <div class="group-title">Backup</div>
+      <BackupSection />
+    </section>
+
     <section id="data">
       <div class="group-title">Daten</div>
       <div class="group">
@@ -65,7 +71,7 @@
         {/if}
       </div>
       <p class="group-note">
-        Wichtig: Wenn du die App vom Home-Bildschirm entfernst, löscht iOS auch alle Karten. Erstelle vorher ein Backup.
+        Wichtig: Wenn du die App vom Home-Bildschirm entfernst, löscht iOS auch alle Karten. Erstelle deshalb regelmäßig ein Backup.
       </p>
     </section>
 
