@@ -1,0 +1,146 @@
+/*
+ * Design-Tokens – die einzige Stelle für Farben, Abstände, Typografie,
+ * Radien, Schatten und Bewegung. Komponenten verwenden nur diese Variablen.
+ */
+:root {
+  color-scheme: light dark;
+
+  /* Typografie */
+  --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, 'Segoe UI', Roboto, sans-serif;
+  --font-display: ui-serif, 'New York', 'Iowan Old Style', 'Palatino', Georgia, serif;
+  --font-rounded: ui-rounded, 'SF Pro Rounded', var(--font-body);
+
+  --fs-hero: 34px;
+  --fs-title: 28px;
+  --fs-h2: 22px;
+  --fs-h3: 19px;
+  --fs-body: 17px;
+  --fs-input: 17px; /* >= 16px verhindert Zoom beim Fokussieren auf iOS */
+  --fs-small: 15px;
+  --fs-caption: 13px;
+  --fs-micro: 11px;
+
+  --lh-tight: 1.2;
+  --lh-snug: 1.35;
+  --lh-body: 1.5;
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  /* Abstände (4er-Raster) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 48px;
+  --gutter: 20px;
+
+  /* Formen */
+  --radius-s: 10px;
+  --radius-m: 14px;
+  --radius-l: 20px;
+  --radius-xl: 28px;
+  --radius-full: 999px;
+  --tap: 44px;
+
+  /* Bewegung */
+  --ease-out: cubic-bezier(0.22, 0.8, 0.24, 1);
+  --ease-in-out: cubic-bezier(0.45, 0, 0.25, 1);
+  --ease-spring: cubic-bezier(0.3, 1.3, 0.5, 1);
+  --dur-fast: 150ms;
+  --dur: 240ms;
+  --dur-flip: 300ms;
+
+  /* Safe Areas */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --tabbar-h: 54px;
+
+  /* Farben – hell: warmes Papier, ruhige Tinte */
+  --bg: #f6f2eb;
+  --bg-elev: #fffdf9;
+  --surface-2: #efe9df;
+  --surface-3: #e5ddd0;
+  --text: #2a2521;
+  --text-2: #685f56;
+  --text-3: #8a8076;
+  --line: rgba(74, 58, 40, 0.1);
+  --line-strong: rgba(74, 58, 40, 0.18);
+
+  --accent: #3d6b63;
+  --accent-strong: #2f5750;
+  --accent-soft: rgba(61, 107, 99, 0.12);
+  --on-accent: #fffdf9;
+
+  --good: #4f8455;
+  --good-soft: rgba(79, 132, 85, 0.14);
+  --bad: #b9614b;
+  --bad-soft: rgba(185, 97, 75, 0.14);
+  --warm: #c08a3e;
+
+  --shadow-1: 0 1px 2px rgba(60, 40, 20, 0.05), 0 2px 10px rgba(60, 40, 20, 0.04);
+  --shadow-2: 0 2px 6px rgba(60, 40, 20, 0.06), 0 14px 36px rgba(60, 40, 20, 0.09);
+  --shadow-card: 0 1px 1px rgba(60, 40, 20, 0.04), 0 10px 30px rgba(60, 40, 20, 0.1);
+
+  --backdrop: rgba(36, 26, 18, 0.32);
+  --bar-bg: rgba(248, 244, 237, 0.84);
+
+  --heat-0: #ebe4d8;
+  --heat-1: #cfdcd5;
+  --heat-2: #9ebdb2;
+  --heat-3: #6b998d;
+  --heat-4: #3d6b63;
+
+  --status-new: #b9ad9e;
+  --status-learning: #c08a3e;
+  --status-secure: #4f8455;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #181614;
+    --bg-elev: #232019;
+    --surface-2: #2b2723;
+    --surface-3: #36312b;
+    --text: #f1ebe2;
+    --text-2: #b8aea2;
+    --text-3: #938a7f;
+    --line: rgba(255, 240, 220, 0.08);
+    --line-strong: rgba(255, 240, 220, 0.15);
+
+    --accent: #8cbfb3;
+    --accent-strong: #a6d2c7;
+    --accent-soft: rgba(140, 191, 179, 0.14);
+    --on-accent: #14211e;
+
+    --good: #8cbf8e;
+    --good-soft: rgba(140, 191, 142, 0.16);
+    --bad: #e0927d;
+    --bad-soft: rgba(224, 146, 125, 0.16);
+    --warm: #ddb071;
+
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-2: 0 2px 6px rgba(0, 0, 0, 0.3), 0 14px 36px rgba(0, 0, 0, 0.35);
+    --shadow-card: 0 1px 1px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.4);
+
+    --backdrop: rgba(0, 0, 0, 0.5);
+    --bar-bg: rgba(30, 27, 24, 0.82);
+
+    --heat-0: #2a2622;
+    --heat-1: #2f4440;
+    --heat-2: #43685f;
+    --heat-3: #659487;
+    --heat-4: #9cccbf;
+
+    --status-new: #6e665c;
+    --status-learning: #ddb071;
+    --status-secure: #8cbf8e;
+  }
+}
