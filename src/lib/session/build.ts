@@ -52,14 +52,21 @@ export function buildItems(cards: Card[], decks: Map<string, Deck>, opts: { forc
   return spreadPairs(shuffle(items, rand));
 }
 
-/** Verhindert, dass beide Richtungen einer Karte direkt aufeinander folgen. */
-function spreadPairs(items: StudyItem[]): StudyItem[] {
+/** Verhindert, dass beide Richtungen einer Karte direkt aufeinander folgen (wo möglich). */
+export function spreadPairs(items: StudyItem[]): StudyItem[] {
   const a = [...items];
   for (let i = 1; i < a.length; i++) {
-    if (a[i].cardId === a[i - 1].cardId) {
-      const j = a.findIndex((it, k) => k > i && it.cardId !== a[i].cardId && a[k - 1]?.cardId !== a[i - 1].cardId);
-      if (j > 0) [a[i], a[j]] = [a[j], a[i]];
+    if (a[i].cardId !== a[i - 1].cardId) continue;
+    // Zuerst einen späteren, passenden Eintrag nach vorn holen …
+    const j = a.findIndex((it, k) => k > i && it.cardId !== a[i].cardId);
+    if (j > 0) {
+      [a[i], a[j]] = [a[j], a[i]];
+      continue;
     }
+    // … sonst den Eintrag weiter vorne an einer freien Lücke einsetzen.
+    const [item] = a.splice(i, 1);
+    const p = a.findIndex((it, k) => k <= i && it.cardId !== item.cardId && (k === 0 || a[k - 1].cardId !== item.cardId));
+    a.splice(p >= 0 ? p : i, 0, item);
   }
   return a;
 }

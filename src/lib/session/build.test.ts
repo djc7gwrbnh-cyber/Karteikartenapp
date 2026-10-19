@@ -64,10 +64,15 @@ describe('Abfrage-Einträge', () => {
   });
 
   it('fragt auf Wunsch beide Richtungen ab, nicht direkt hintereinander', () => {
-    const cards = ['a', 'b', 'c', 'd2'].map((id) => card(id));
-    const items = buildItems(cards, new Map([['d', deck({ bothDirections: true })]]), {}, Math.random);
-    expect(items).toHaveLength(8);
-    for (let i = 1; i < items.length; i++) expect(items[i].cardId === items[i - 1].cardId).toBe(false);
+    for (const n of [2, 3, 4, 7]) {
+      const cards = Array.from({ length: n }, (_, i) => card('c' + i));
+      for (let run = 0; run < 200; run++) {
+        const items = buildItems(cards, new Map([['d', deck({ bothDirections: true })]]), {}, Math.random);
+        expect(items).toHaveLength(2 * n);
+        expect(new Set(items.map((i) => i.key)).size).toBe(2 * n);
+        for (let i = 1; i < items.length; i++) expect(items[i].cardId).not.toBe(items[i - 1].cardId);
+      }
+    }
   });
 
   it('behält ohne Mischen die Reihenfolge', () => {
