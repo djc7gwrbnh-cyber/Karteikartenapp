@@ -5,6 +5,7 @@
   import SectionHeader from '../../ui/SectionHeader.svelte';
   import FolderCollection from './FolderCollection.svelte';
   import FolderEditor from './FolderEditor.svelte';
+  import DueCard from './DueCard.svelte';
   import { library } from '../../app/library.svelte';
   import { settings } from '../../app/settings.svelte';
 
@@ -26,6 +27,7 @@
   {/snippet}
 
   {#if library.loaded}
+    <DueCard />
     {#if folders.length === 0}
       <EmptyState
         illustration="folders"
