@@ -6,6 +6,8 @@
   import LearnHome from '../features/learn/LearnHome.svelte';
   import HistoryHome from '../features/history/HistoryHome.svelte';
   import SettingsHome from '../features/settings/SettingsHome.svelte';
+  import FolderView from '../features/learn/FolderView.svelte';
+  import Overlays from '../ui/Overlays.svelte';
 
   const route = $derived(router.route);
   const tab = $derived(tabOf(route));
@@ -30,6 +32,8 @@
           <HistoryHome />
         {:else if seg[0] === 'settings'}
           <SettingsHome />
+        {:else if seg[0] === 'folder' && seg[1]}
+          <FolderView id={seg[1]} />
         {:else}
           <LearnHome />
         {/if}
@@ -43,6 +47,8 @@
     </div>
   {/if}
 </div>
+
+<Overlays />
 
 <style>
   .app {
