@@ -8,6 +8,9 @@
   import SettingsHome from '../features/settings/SettingsHome.svelte';
   import FolderView from '../features/learn/FolderView.svelte';
   import Overlays from '../ui/Overlays.svelte';
+  import DeckView from '../features/learn/DeckView.svelte';
+  import QuickAdd from '../features/learn/QuickAdd.svelte';
+  import CardEditor from '../features/learn/CardEditor.svelte';
 
   const route = $derived(router.route);
   const tab = $derived(tabOf(route));
@@ -32,6 +35,12 @@
           <HistoryHome />
         {:else if seg[0] === 'settings'}
           <SettingsHome />
+        {:else if seg[0] === 'deck' && seg[1] && seg[2] === 'add'}
+          <QuickAdd deckId={seg[1]} />
+        {:else if seg[0] === 'deck' && seg[1]}
+          <DeckView id={seg[1]} />
+        {:else if seg[0] === 'card' && seg[1]}
+          <CardEditor id={seg[1]} />
         {:else if seg[0] === 'folder' && seg[1]}
           <FolderView id={seg[1]} />
         {:else}

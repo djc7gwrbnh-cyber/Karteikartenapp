@@ -116,3 +116,17 @@ export async function cardsOfDeck(deckId: string): Promise<Card[]> {
     .between([deckId, Dexie.minKey], [deckId, Dexie.maxKey])
     .toArray();
 }
+
+/** Kopie von Karten samt Bildern, z. B. für „Rückgängig“ nach dem Löschen. */
+export async function snapshotCards(ids: string[]) {
+  const cards = (await db.cards.bulkGet(ids)).filter((c): c is Card => !!c);
+  const images = (await db.images.bulkGet(cards.flatMap(imageIds))).filter((i) => !!i);
+  return { cards, images };
+}
+
+export async function restoreSnapshot(snapshot: Awaited<ReturnType<typeof snapshotCards>>) {
+  await db.transaction('rw', db.cards, db.images, async () => {
+    await db.images.bulkPut(snapshot.images);
+    await db.cards.bulkPut(snapshot.cards);
+  });
+}

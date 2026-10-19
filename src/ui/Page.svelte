@@ -92,8 +92,8 @@
     position: absolute;
     inset: 0 0 auto 0;
     z-index: 10;
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    display: flex;
+    justify-content: space-between;
     align-items: center;
     gap: var(--space-2);
     padding: var(--safe-top) max(var(--safe-right), 6px) 0 max(var(--safe-left), 6px);
@@ -117,16 +117,24 @@
     display: flex;
     align-items: center;
     min-width: 0;
+    max-width: 62%;
   }
 
   .bar-side.right {
     justify-content: flex-end;
+    flex: none;
+    max-width: 40%;
   }
 
   .bar-title {
+    position: absolute;
+    left: 50%;
+    bottom: 14px;
+    translate: -50% 0;
+    pointer-events: none;
     font-size: var(--fs-body);
     font-weight: var(--fw-semibold);
-    max-width: 52vw;
+    max-width: 46vw;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -141,6 +149,12 @@
   .bar.always .bar-title {
     opacity: 1;
     transform: none;
+  }
+
+  /* Wenn der Titel sichtbar ist, macht die Zurück-Beschriftung Platz. */
+  .bar.scrolled .back span,
+  .bar.always .back span {
+    max-width: 22vw;
   }
 
   .back {

@@ -6,6 +6,9 @@
   import SectionHeader from '../../ui/SectionHeader.svelte';
   import FolderCollection from './FolderCollection.svelte';
   import FolderEditor from './FolderEditor.svelte';
+  import DeckCollection from './DeckCollection.svelte';
+  import DeckEditor from './DeckEditor.svelte';
+  import type { Deck } from '../../lib/db/types';
   import { library } from '../../app/library.svelte';
   import { router } from '../../app/router.svelte';
   import { settings } from '../../app/settings.svelte';
@@ -18,6 +21,7 @@
   const folder = $derived(library.folder(id));
   const parent = $derived(folder?.parentId ? library.folder(folder.parentId) : undefined);
   const subfolders = $derived(library.childFolders(id));
+  const decks = $derived(library.decksIn(id));
   const stat = $derived(library.folderStats.get(id));
   const view = $derived(settings.values.folderView);
   const backPath = $derived(parent ? `/folder/${parent.id}` : '/');
@@ -25,17 +29,26 @@
   let editing = $state(false);
   let creatingSub = $state(false);
   let sorting = $state(false);
+  let creatingDeck = $state(false);
 
   async function add() {
-    const choice = await actionSheet([{ id: 'sub', label: 'Neues Thema (Unterordner)', icon: 'folderPlus' }]);
+    const choice = await actionSheet([
+      { id: 'deck', label: 'Neuer Stapel', icon: 'cards' },
+      { id: 'sub', label: 'Neues Thema (Unterordner)', icon: 'folderPlus' }
+    ]);
+    if (choice === 'deck') creatingDeck = true;
     if (choice === 'sub') creatingSub = true;
+  }
+
+  function openDeck(deck: Deck) {
+    router.go(`/deck/${deck.id}`);
   }
 
   async function more() {
     const choice = await actionSheet(
       [
         { id: 'edit', label: 'Ordner bearbeiten', icon: 'edit' },
-        ...(subfolders.length > 1 ? [{ id: 'sort', label: 'Sortieren', icon: 'sort' as const }] : []),
+        ...(subfolders.length > 1 || decks.length > 1 ? [{ id: 'sort', label: 'Sortieren', icon: 'sort' as const }] : []),
         { id: 'delete', label: 'Ordner löschen', icon: 'trash', destructive: true }
       ],
       folder?.name
@@ -96,17 +109,34 @@
       <FolderCollection folders={subfolders} {view} {sorting} />
     {/if}
 
-    {#if !subfolders.length}
-      <EmptyState illustration="cards" title="Noch ganz leer hier" text="Lege ein Thema an, um diesen Ordner zu gliedern.">
-        <button class="btn btn-primary" onclick={() => (creatingSub = true)}>
-          <Icon name="folderPlus" size={20} /> Thema anlegen
+    {#if decks.length}
+      <SectionHeader title="Stapel">
+        {#if !sorting}
+          <button class="icon-btn" aria-label="Neuer Stapel" onclick={() => (creatingDeck = true)}>
+            <Icon name="plus" size={22} />
+          </button>
+        {/if}
+      </SectionHeader>
+      <DeckCollection {decks} {sorting} onopen={openDeck} />
+    {/if}
+
+    {#if !subfolders.length && !decks.length}
+      <EmptyState
+        illustration="cards"
+        title="Noch ganz leer hier"
+        text="Lege einen Stapel mit Karten an – oder gliedere den Ordner zuerst in Themen."
+      >
+        <button class="btn btn-primary btn-large" onclick={() => (creatingDeck = true)}>
+          <Icon name="cards" size={20} /> Stapel anlegen
         </button>
+        <button class="btn btn-quiet" onclick={() => (creatingSub = true)}>Thema anlegen</button>
       </EmptyState>
     {/if}
   </Page>
 
   <FolderEditor bind:open={editing} {folder} parentId={folder.parentId} />
   <FolderEditor bind:open={creatingSub} parentId={folder.id} />
+  <DeckEditor bind:open={creatingDeck} folderId={folder.id} onsaved={(deckId) => router.go(`/deck/${deckId}`)} />
 {:else if library.loaded}
   <Page title="Nicht gefunden" back="/" backLabel="Lernen">
     <EmptyState illustration="search" title="Dieser Ordner ist nicht mehr da" text="Vielleicht wurde er gelöscht." />
