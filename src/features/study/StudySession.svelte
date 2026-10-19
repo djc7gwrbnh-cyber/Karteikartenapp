@@ -96,7 +96,7 @@
           <CardFace side={next.q} label={next.ql} />
         </div>
       {/if}
-      {#key currentItem.key}
+      {#key `${currentItem.key}#${session.history.length}`}
         <div class="card-slot">
           <StudyCard
             bind:this={cardRef}
