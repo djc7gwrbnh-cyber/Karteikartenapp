@@ -11,6 +11,7 @@
   import DeckView from '../features/learn/DeckView.svelte';
   import QuickAdd from '../features/learn/QuickAdd.svelte';
   import CardEditor from '../features/learn/CardEditor.svelte';
+  import StudyScreen from '../features/study/StudyScreen.svelte';
 
   const route = $derived(router.route);
   const tab = $derived(tabOf(route));
@@ -31,7 +32,9 @@
         class="screen"
         in:fly={{ x: switchedTab ? 0 : 14, duration: dur(switchedTab ? 180 : 240), opacity: 0 }}
       >
-        {#if seg[0] === 'history'}
+        {#if seg[0] === 'study'}
+          <StudyScreen />
+        {:else if seg[0] === 'history'}
           <HistoryHome />
         {:else if seg[0] === 'settings'}
           <SettingsHome />

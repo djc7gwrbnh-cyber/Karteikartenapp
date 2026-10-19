@@ -8,6 +8,8 @@
   import CardRow from './CardRow.svelte';
   import DeckEditor from './DeckEditor.svelte';
   import DeckPicker from './DeckPicker.svelte';
+  import StartSheet from '../study/StartSheet.svelte';
+  import { startDeck } from '../study/start';
   import { library } from '../../app/library.svelte';
   import { router } from '../../app/router.svelte';
   import { live } from '../../lib/live.svelte';
@@ -44,6 +46,7 @@
   let editing = $state(false);
   let moving = $state<string | null>(null);
   let picking = $state(false);
+  let starting = $state(false);
 
   const filtered = $derived(
     cards.value.filter((c) => (filter === 'all' || cardStatus(c) === filter) && matchesCard(c, query))
@@ -148,6 +151,14 @@
             <span><i class="new"></i>{stat.new} neu</span>
           </div>
         </div>
+        <div class="start">
+          <button class="btn btn-primary btn-large" onclick={() => (starting = true)}>
+            <Icon name="play" size={20} /> Lernen
+          </button>
+          <button class="btn btn-large" disabled={!stat.due} onclick={() => startDeck(deck, 'review')}>
+            <Icon name="repeat" size={20} /> {stat.due ? `${stat.due} fällig` : 'Nichts fällig'}
+          </button>
+        </div>
       {/if}
     {/snippet}
 
@@ -197,6 +208,7 @@
     {/if}
   </Page>
 
+  <StartSheet bind:open={starting} {deck} showCardsLink={false} />
   <DeckEditor bind:open={editing} {deck} folderId={deck.folderId} />
   <DeckPicker bind:open={picking} exclude={id} title="Verschieben nach" onpick={move} />
 {:else if library.loaded}
@@ -243,6 +255,13 @@
 
   .legend .new {
     background: var(--status-new);
+  }
+
+  .start {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
   }
 
   .tools {

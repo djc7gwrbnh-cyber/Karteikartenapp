@@ -9,6 +9,7 @@
   import DeckCollection from './DeckCollection.svelte';
   import DeckEditor from './DeckEditor.svelte';
   import type { Deck } from '../../lib/db/types';
+  import StartSheet from '../study/StartSheet.svelte';
   import { library } from '../../app/library.svelte';
   import { router } from '../../app/router.svelte';
   import { settings } from '../../app/settings.svelte';
@@ -40,8 +41,17 @@
     if (choice === 'sub') creatingSub = true;
   }
 
+  let startDeck = $state<Deck | null>(null);
+  let starting = $state(false);
+
+  // Ein Tipp auf einen Stapel startet das Lernen; leere Stapel öffnen sich zum Befüllen.
   function openDeck(deck: Deck) {
-    router.go(`/deck/${deck.id}`);
+    if (library.stat(deck.id).total === 0) {
+      router.go(`/deck/${deck.id}`);
+      return;
+    }
+    startDeck = deck;
+    starting = true;
   }
 
   async function more() {
@@ -136,6 +146,7 @@
 
   <FolderEditor bind:open={editing} {folder} parentId={folder.parentId} />
   <FolderEditor bind:open={creatingSub} parentId={folder.id} />
+  {#if startDeck}<StartSheet bind:open={starting} deck={startDeck} />{/if}
   <DeckEditor bind:open={creatingDeck} folderId={folder.id} onsaved={(deckId) => router.go(`/deck/${deckId}`)} />
 {:else if library.loaded}
   <Page title="Nicht gefunden" back="/" backLabel="Lernen">
