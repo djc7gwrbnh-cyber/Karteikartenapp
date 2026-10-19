@@ -6,6 +6,19 @@ Alles bleibt lokal auf dem Gerät – kein Konto, kein Server, kein Tracking.
 **App öffnen:** https://djc7gwrbnh-cyber.github.io/Karteikartenapp/
 In Safari öffnen → Teilen → „Zum Home-Bildschirm“.
 
+## Was die App kann
+
+- **Ordner** für Fächer und Themen (beliebig verschachtelt), mit Farbe und Symbol, als Kacheln oder Liste, sortierbar
+- **Stapel** mit Beschreibung, eigener Farbe, Richtung (Vorder-/Rückseite zuerst, beide Richtungen), Mischen
+- **Karten** per Schnelleingabe (Eingabetaste springt weiter, Tastatur bleibt offen) oder per **Foto**
+  (Zuschneiden, Drehen, auf max. 1600 px komprimiert)
+- **Lernmodus**: Tippen dreht um, rechts wischen = gewusst, links = nochmal; nicht Gewusstes kommt
+  3–6 Karten später wieder; Rückgängig; Abschluss mit Kuchendiagramm und Vergleich
+- **Spaced Repetition** (vereinfachtes SM-2, `src/lib/srs/sm2.ts`), „Heute fällig“ über alle Ordner
+- **Verlauf**: Kalender-Heatmap, Lernstreak ohne Druck, Trefferquote, Lernstand je Stapel
+- **Motivation**: tägliche Nachricht, eigene Nachrichten, warme Rückmeldung nach jeder Sitzung
+- **Daten**: Backup (inkl. Bilder), Stapel teilen, Textlisten `Vorderseite;Rückseite`, komplett offline
+
 ## Entwicklung
 
 ```bash
